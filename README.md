@@ -9,13 +9,17 @@ This project investigates tumor proliferation patterns using bulk RNA-seq gene e
 - **Melanoma**
   - Source: NCBI GEO
   - Accession: GSE65904
+  -  Platform:
+   - GSE71646 series matrix file  
+   - GPL10558 annotation file  
 
 - **Glioma**
   - Source: NCBI GEO
-  - Accession: (add your dataset here)
+  - Accession: GSE4290
+  - -  Platform:
+   - GSE4290_series_matrix file  
+   - GPL570-55999 annotation file  
 
-- **Platform**
-  - GPL10558 (Illumina HumanHT-12 V4.0)
 
 Gene annotation was retrieved from the corresponding GPL platform file.
 
