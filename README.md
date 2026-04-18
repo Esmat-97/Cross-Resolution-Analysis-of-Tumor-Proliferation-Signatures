@@ -1,76 +1,114 @@
-# 🔬 Cross-Resolution Analysis of Tumor Proliferation Signatures
+# 🔬 Cross-Dataset Analysis of Tumor Proliferation Signatures
 
-This project explores tumor proliferation patterns using bulk gene expression data from NCBI GEO, with a focus on uncovering intra-tumoral heterogeneity through computational analysis.
+This project investigates tumor proliferation patterns using bulk RNA-seq gene expression data, with a focus on identifying intra-tumoral heterogeneity and comparing its structure across different cancer types.
 
 ---
 
-## 📊 Dataset
+## 📊 Datasets
 
-- **Source:** NCBI GEO  
-- **Accession:** GSE71646  
-- **Platform:** GPL10558 (Illumina HumanHT-12 V4.0 expression beadchip)
+- **Melanoma**
+  - Source: NCBI GEO
+  - Accession: GSE65904
 
-Gene annotation was obtained from the corresponding GPL platform file.
+- **Glioma**
+  - Source: NCBI GEO
+  - Accession: (add your dataset here)
+
+- **Platform**
+  - GPL10558 (Illumina HumanHT-12 V4.0)
+
+Gene annotation was retrieved from the corresponding GPL platform file.
 
 ---
 
 ## ⚙️ Workflow Overview
 
-1. **Data preprocessing**
-   - Parsed GEO series matrix file
-   - Extracted numeric expression values
-   - Merged with GPL annotation (probe → gene mapping)
-   - Aggregated multiple probes per gene (mean expression)
+### 1. Data Preprocessing
+- Parsed GEO series matrix files
+- Extracted numeric gene expression values
+- Mapped probe IDs to gene symbols using GPL annotation
+- Aggregated multiple probes per gene (mean expression)
 
-2. **Exploratory analysis**
-   - Examined key proliferation markers:
-     - *MKI67, PCNA, CCNB1, CDK1*
-   - Compared expression distributions across samples
+---
 
-3. **Correlation analysis**
-   - Constructed Pearson correlation matrix for cell-cycle genes
-   - Observed strong co-expression across proliferation-related genes
+### 2. Gene Selection
+Focused on key proliferation and cell-cycle markers:
 
-4. **Dimensionality reduction & clustering**
-   - Applied PCA on cell-cycle gene expression
-   - Performed KMeans clustering to identify sample subgroups
+- **Core markers:**
+  - MKI67, PCNA, CCNB1, CDK1
 
-5. **Cluster-level interpretation**
-   - Evaluated MKI67 expression across clusters
-   - Assessed variability in proliferative states
+- **Extended cell-cycle set:**
+  - MCM2, MCM4, MCM5, TOP2A, CDC20, UBE2C, NDC80, TYMS, FEN1, RRM1
+
+---
+
+### 3. Exploratory Analysis
+- Boxplots and violin plots of gene expression
+- Comparison of proliferation markers across samples
+- Correlation heatmap of cell-cycle genes
+
+---
+
+### 4. Dimensionality Reduction & Clustering
+- Standardization of expression values
+- PCA (Principal Component Analysis)
+- KMeans clustering to identify sample subgroups
+
+---
+
+### 5. Cluster-Level Interpretation
+- Analysis of MKI67 expression across clusters
+- Identification of distinct proliferative states
 
 ---
 
 ## 🔥 Key Findings
 
-- **Expected:** Tumor samples show elevated proliferation marker expression (e.g., MKI67)
+### 1. Proliferation is Not Uniform
+Clustering based on cell-cycle genes reveals that:
 
-- **More importantly:**
-  > Unsupervised clustering reveals **distinct proliferative subgroups within samples**, indicating that proliferation is not a uniform signal.
-
-- **Interpretation:**
-  - High MKI67 cluster → highly proliferative state  
-  - Lower MKI67 clusters → reduced or alternative cell-cycle activity  
-  - Suggests **intra-tumoral heterogeneity in proliferation**
+> Tumor samples are not homogeneous — they exhibit distinct proliferative states.
 
 ---
 
-## 🧠 Biological Insight
+### 2. Cross-Dataset Differences in Structure
 
-While bulk comparisons (tumor vs normal) capture global trends, clustering based on cell-cycle genes highlights **hidden structure within the data**, suggesting that:
+Despite observing proliferation heterogeneity in both datasets, the **structure of this heterogeneity differs**:
 
-> Proliferation is a heterogeneous and structured feature, not a single continuous gradient.
+- **Glioma**
+  - Displays a **continuous gradient** of MKI67 expression
+  - Suggests progressive variation in proliferative activity
 
-This aligns with observations from single-cell studies where tumor cell populations exist in distinct transcriptional states.
+- **Melanoma**
+  - Exhibits **discrete clusters**
+  - Indicates distinct proliferative states rather than a continuum
 
 ---
 
-## 📁 Outputs
+### 3. Key Insight
 
-- 📦 Boxplots and violin plots for gene expression
-- 📊 Correlation heatmap of cell-cycle genes
-- 📉 PCA visualization of sample structure
-- 🔥 Cluster-specific MKI67 expression analysis
+> Proliferation heterogeneity is conserved across tumor types, but its structural organization varies.
+
+---
+
+## 🧠 Biological Interpretation
+
+- **Glioma**
+  - May reflect gradual transitions between proliferative states
+  - Suggests higher plasticity in tumor growth dynamics
+
+- **Melanoma**
+  - Likely composed of more defined subpopulations
+  - Proliferation may behave as a state-switching process
+
+---
+
+## 📊 Outputs
+
+- 📦 Gene expression boxplots and violin plots  
+- 📊 Cell-cycle correlation heatmaps  
+- 📉 PCA visualizations  
+- 🔥 Cluster-specific MKI67 expression plots (per dataset)  
 
 ---
 
@@ -85,24 +123,15 @@ This aligns with observations from single-cell studies where tumor cell populati
 
 ## 🚀 Future Directions
 
-- Validate findings across independent GEO datasets  
+- Validate findings across additional tumor datasets  
 - Compare bulk-derived clusters with scRNA-seq cell states  
-- Expand gene sets (Hallmark cell cycle / proliferation signatures)  
-- Integrate immune markers to explore proliferation–immune interactions  
+- Integrate immune-related genes to explore proliferation–immune interactions  
+- Investigate links with clinical features (if available)  
 
 ---
 
 ## 📎 Reproducibility
 
-To run the analysis:
-
-1. Download the dataset from GEO:
-   - GSE71646 series matrix file  
-   - GPL10558 annotation file  
-
-2. Place them in the `data/` directory  
-
-3. Run:
-
+### Requirements:
 ```bash
-python Plotting.py
+pip install pandas seaborn matplotlib scikit-learn
