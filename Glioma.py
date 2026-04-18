@@ -8,7 +8,7 @@ from sklearn.preprocessing import StandardScaler
 # ================================
 # 1. Load GEO data
 # ================================
-df = pd.read_csv("GSE71646-GPL10558_series_matrix.txt", sep="\t", comment="!")
+df = pd.read_csv("GSE4290_series_matrix.txt", sep="\t", comment="!")
 df.set_index("ID_REF", inplace=True)
 
 # Select numeric columns
@@ -17,10 +17,11 @@ numeric_df = df.select_dtypes(include=["number"])
 
 
 
+
 # ================================
 # 2. Load annotation file
 # ================================
-anno_file = "GPL10558-50081.txt"
+anno_file = "GPL570-55999.txt"
 
 header_line = None
 with open(anno_file, encoding="utf-8") as f:
@@ -76,16 +77,47 @@ print("Final shape after grouping:", merged.shape)
 
 
 
+
+# ================================
+# 4. Extract phenotype (Tumor vs Normal)
+# ================================
+sample_ids = []
+groups = []
+
+with open("GSE4290_series_matrix.txt") as f:
+    for line in f:
+        if line.startswith("!Sample_geo_accession"):
+            parts = line.strip().split("=")
+            if len(parts) > 1:
+                sample_ids.append(parts[1].strip())
+        if line.startswith("!Sample_characteristics_ch1"):
+            parts = line.strip().split("=")
+            if len(parts) > 1:
+                value = parts[1].strip()
+                # تنظيف النصوص
+                if "Tumor" in value:
+                    groups.append("Tumor")
+                elif "Normal" in value:
+                    groups.append("Normal")
+                else:
+                    groups.append(value)
+
+# بناء DataFrame متوافق
+sample_info = pd.DataFrame({
+    "Sample": sample_ids,
+    "Group": groups
+})
+
+# فلترة بحيث تتطابق مع أعمدة merged
+sample_info = sample_info[sample_info["Sample"].isin(merged.columns)]
+
+print(sample_info["Group"].value_counts())
+
+
+
 # ================================
 # 4. MKI67 Tumor vs Normal (optional)
 # ================================
-samples = merged.columns
-
-# ⚠️ عدّل حسب ترتيب الداتا عندك
-sample_info = pd.DataFrame({
-    "Sample": samples,
-    "Group": ["Tumor"]*6 + ["Normal"]*6
-})
 
 mki67_values = merged.loc["MKI67"]
 
@@ -98,8 +130,8 @@ mki67_normal = mki67_values[normal_samples]
 plt.figure(figsize=(6,5))
 sns.boxplot(data=[mki67_tumor, mki67_normal])
 plt.xticks([0,1], ["Tumor","Normal"])
-plt.title("MKI67 Expression (Tumor vs Normal)")
-plt.savefig("MKI67_Tumor_vs_Normal.png")
+plt.title("MKI67 Expression (Tumor vs Normal) in Glioma")
+plt.savefig("Glioma images/MKI67_Tumor_vs_Normal.png")
 plt.show()
 
 
@@ -114,9 +146,11 @@ proliferation_df = merged.loc[merged.index.intersection(proliferation_genes)]
 
 plt.figure(figsize=(8,5))
 sns.boxplot(data=proliferation_df.T)
-plt.title("Proliferation Genes Expression")
-plt.savefig("Proliferation_Genes_Boxplot.png")
+plt.title("Proliferation Genes Expression in Glioma")
+plt.savefig("Glioma images/Proliferation_Genes_Boxplot in Glioma.png")
 plt.show()
+
+
 
 
 
@@ -138,8 +172,8 @@ corr_matrix = subset.corr()
 
 plt.figure(figsize=(10,8))
 sns.heatmap(corr_matrix, cmap="coolwarm", center=0)
-plt.title("Cell Cycle Correlation")
-plt.savefig("Correlation_Heatmap.png")
+plt.title("Cell Cycle Correlation in Glioma")
+plt.savefig("Glioma images/Correlation_Heatmap in Glioma.png")
 plt.show()
 
 
@@ -165,9 +199,9 @@ plt.figure(figsize=(8,6))
 plt.scatter(pca_result[:,0], pca_result[:,1], c=clusters, cmap="tab10")
 plt.xlabel("PC1")
 plt.ylabel("PC2")
-plt.title("Cell-Cycle Genes PCA + KMeans")
+plt.title("Cell-Cycle Genes PCA + KMeans in Glioma")
 plt.colorbar(label="Cluster")
-plt.savefig("PCA_KMeans.png")
+plt.savefig("Glioma images/PCA_KMeans in Glioma.png")
 plt.show()
 
 
@@ -185,6 +219,6 @@ cluster_df = pd.DataFrame({
 
 plt.figure(figsize=(6,5))
 sns.boxplot(x="Cluster", y="MKI67", data=cluster_df)
-plt.title("MKI67 Expression Across Clusters")
-plt.savefig("MKI67_Clusters.png")
+plt.title("MKI67 Expression Across Clusters in Glioma")
+plt.savefig("Glioma images/MKI67_Clusters in Glioma.png")
 plt.show()
